@@ -26,3 +26,5 @@ Requirements:
 1. Create a branch for each feature / task from origin/master and make a pull request at the end of the development
 2. Each member must test their own changes before creating the pull request
 3. Each PR must be reviewd and approved before merging by the team's scrum master or my someone familiar with the area / technology
+4. Make sure all checks are passing before merging the code
+5. Add unit tests for the features you are developing
