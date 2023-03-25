@@ -15,5 +15,3 @@ services:
 volumes:
   vol_db:
     driver: local
-  file_server_service_volume:
-    driver: local

@@ -6,7 +6,11 @@ How to setup for local development?
 2. run 'make sqlup' in the root folder. This will create a docker container with the SQL Server instance
 3. run the BackendService application
 
-For Frontend team: run 'make up' to also start an instance of the backend service application ready to use by the mobile app
+(run 'make sqldown' to stop the sql server)
+
+For Frontend team: run 'make up' to also start an instance of the backend service application ready to use by the mobile app.
+
+(run 'make down' to stop the backend service application instance)
 
 # Create database migrations
 

@@ -10,7 +10,8 @@ help : Makefile
 
 up:
 	@echo "Starting up containers for for $(PROJECT_NAME)"
-	docker-compose -f makefile_compose.yml up --build -d --remove-orphans
+	docker-compose -f makefile_compose.yml build --no-cache backend_service
+	docker-compose -f makefile_compose.yml up --build --force-recreate -d --remove-orphans
 
 sqlup: 
 	@echo "Starting up containers for for $(PROJECT_NAME)"

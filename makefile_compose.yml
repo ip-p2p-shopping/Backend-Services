@@ -9,22 +9,25 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - vol_db:/var/opt/mssql
-    ports:
-      - "9999:1433" 
+    expose:
+      - 1433
 
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: p2p_nginx_webserver
-  #   restart: unless-stopped
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ./.compose/nginx/nginx.conf:/etc/nginx/nginx.conf
-  #     - ./.compose/nginx/ssl:/ssl/
+  backend_service:
+    container_name: p2p_shopping_backend_service
+    depends_on: 
+      - sql_server
+    restart: always
+    build:
+      context: .
+      dockerfile: ./BackendService/Dockerfile
+    volumes:
+      - backend_service_volume:/app 
+    ports:
+      - "8080:80"
+      - "8081:443"
 
 volumes:
   vol_db:
     driver: local
-  file_server_service_volume:
+  backend_service_volume:
     driver: local

@@ -11,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 string sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+Console.WriteLine($"Using {sqlServerConnectionString} as database connection string");
 
 builder.Services.AddDbContext<ShoppingDbContext>(options => 
     options.UseSqlServer(sqlServerConnectionString));
@@ -21,17 +22,14 @@ using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
     var dbContext = service.GetService<ShoppingDbContext>();
-    dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
+    dbContext?.Database.EnsureCreated();
+    dbContext?.Database.Migrate();
 }
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
