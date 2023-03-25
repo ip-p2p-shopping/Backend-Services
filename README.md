@@ -19,3 +19,10 @@ Alternatively, you can use the same make sqlup command and run the backend servi
 Requirements:
 
 1. Install dotnet-ef tools: "dotnet tool install --global dotnet-ef"
+2. Execute "dotnet ef migrations add <migration_name>" (<migration_name> must be unique)
+
+# Development rules
+
+1. Create a branch for each feature / task from origin/master and make a pull request at the end of the development
+2. Each member must test their own changes before creating the pull request
+3. Each PR must be reviewd and approved before merging by the team's scrum master or my someone familiar with the area / technology
