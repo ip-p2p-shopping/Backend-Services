@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  sql_server:
+    container_name: p2p_shopping_sql_server
+    restart: always
+    image: "mcr.microsoft.com/azure-sql-edge"
+    environment:
+      SA_PASSWORD: "nH2nNC93A8D"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - vol_db:/var/opt/mssql
+    ports:
+      - "9999:1433" 
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: p2p_nginx_webserver
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./.compose/nginx/nginx.conf:/etc/nginx/nginx.conf
+  #     - ./.compose/nginx/ssl:/ssl/
+
+volumes:
+  vol_db:
+    driver: local
+  file_server_service_volume:
+    driver: local

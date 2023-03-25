@@ -1,9 +1,7 @@
 PROJECT_NAME=p2p-shopping
 PROJECT_CONTAINER_NAME_PREFIX=p2p-shopping
 
-export COMPOSE_FILE=makefile_compose_server.yml
-
-.PHONY: up down stop prune ps shell logs tests
+.PHONY: up down sqlup sqldown 
 
 default: up
 
@@ -11,27 +9,20 @@ help : Makefile
 	@sed -n 's/^##//p' $<
 
 up:
-	@echo "Starting up containers for for $(PROJECT_NAME) using $(COMPOSE_FILE)..."
-	#docker-compose pull
-	docker-compose up --build -d --remove-orphans
+	@echo "Starting up containers for for $(PROJECT_NAME)"
+	docker-compose -f makefile_compose.yml up --build -d --remove-orphans
 
-build:
-	@echo "Building with no cache python image for for $(PROJECT_NAME)..."
-	docker-compose build --no-cache
+sqlup: 
+	@echo "Starting up containers for for $(PROJECT_NAME)"
+	docker-compose -f makefile_compose_sql.yml up --build -d --remove-orphans
 
-down: stop
-
-start:
-	@echo "Starting containers for $(PROJECT_NAME) from where you left off..."
-	@docker-compose start
-
-stop:
+down:
 	@echo "Stopping containers for $(PROJECT_NAME)..."
-	@docker-compose stop
+	@docker-compose -f makefile_compose.yml stop
 
-prune:
-	@echo "Removing containers for $(PROJECT_NAME)..."
-	@docker-compose down -v $(filter-out $@,$(MAKECMDGOALS))
+sqldown:
+	@echo "Stopping containers for $(PROJECT_NAME)..."
+	@docker-compose -f makefile_compose_sql.yml stop
 
 %:
 	@:
