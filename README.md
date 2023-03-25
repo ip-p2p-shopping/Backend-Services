@@ -12,6 +12,8 @@ For Frontend team: run 'make up' to also start an instance of the backend servic
 
 (run 'make down' to stop the backend service application instance)
 
+Alternatively, you can use the same make sqlup command and run the backend service application using Visual Studio or by executing 'dotnet run' in the CLI
+
 # Create database migrations
 
 Requirements:
