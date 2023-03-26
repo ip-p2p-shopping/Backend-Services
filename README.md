@@ -28,3 +28,9 @@ Requirements:
 3. Each PR must be reviewd and approved before merging by the team's scrum master or my someone familiar with the area / technology
 4. Make sure all checks are passing before merging the code
 5. Add unit tests for the features you are developing
+
+# Docker setup guide
+
+https://docs.docker.com/desktop/windows/wsl/
+
+https://linuxhint.com/run-makefile-windows/ (alternatively you can manually run the commands from the makefile itself in the terminal)
