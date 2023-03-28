@@ -23,8 +23,8 @@ services:
     volumes:
       - backend_service_volume:/app 
     ports:
-      - "8080:80"
-      - "8081:443"
+      - "9090:80"
+      - "9091:443"
 
 volumes:
   vol_db:
