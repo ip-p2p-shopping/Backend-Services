@@ -30,8 +30,10 @@ using (var scope = app.Services.CreateScope())
     dbContext?.Database.Migrate();
 }
 
-app.MapGet("/username", (HttpContext context) =>
+app.MapGet("/username", (HttpContext context, IDataProtectionProvider idp) =>
 {
+    var protector = idp.CreateProtector("auth-cookie");
+
     var authCookie = context.Request.Headers.Cookie.FirstOrDefault(x => x.StartsWith("auth="));
     return authCookie;
 });
@@ -41,6 +43,12 @@ app.MapGet("/login", (HttpContext context, IDataProtectionProvider idp) =>
     var protector = idp.CreateProtector("auth-cookie");
     context.Response.Headers["set-cookie"] = $"auth={protector.Protect("usr:anton")}";
     return "ok";
+});
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("Header-Key", "Header-Value");
+    await next();
 });
 
 
