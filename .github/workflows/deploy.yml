@@ -70,6 +70,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'ip-p2p-shopping'
-          slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_7c1760fe54d34fed8fbdf60ebf0916ff }}
           package: .
