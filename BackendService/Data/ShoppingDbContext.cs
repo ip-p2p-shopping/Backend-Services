@@ -18,6 +18,6 @@ public class ShoppingDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(b => b.Id);
         modelBuilder.Entity<User>()
-            .HasIndex(b => b.Email);
+            .HasIndex(b => b.Email).IsUnique();
     }
 }

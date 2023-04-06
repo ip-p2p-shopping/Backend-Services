@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using BackendService.Data;
 using BackendService.Data.Models;
+using BackendService.Models;
 using BackendService.Services;
 using BackendService.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -32,14 +33,14 @@ namespace BackendService
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(EmailPasswordModel model)
         {
-            var user = await _dbContext.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+            var user = await _dbContext.Users.Where(x => x.Email == model.email.ToLower().Replace(" ", "")).FirstOrDefaultAsync();
             if (user == null)
             {
                 return StatusCode(404);
             }
-            if (user.Password != EncryptionHelpers.ComputeHash(password))
+            if (user.Password != EncryptionHelpers.ComputeHash(model.password))
             {
                 return StatusCode(401);
             }
@@ -52,15 +53,19 @@ namespace BackendService
         [HttpPost]
         [AllowAnonymous]
         [Route("Register")]
-        public async Task<IActionResult> Register(string email, string password)
+        public async Task<IActionResult> Register(EmailPasswordModel model)
         {
+            if (await _dbContext.Users.Where(x => x.Email == model.email.ToLower().Replace(" ", "")).AnyAsync())
+            {
+                return StatusCode(409);
+            }
             await _dbContext.Users.AddAsync(new User()
             {
-                Email = email,
-                Password = EncryptionHelpers.ComputeHash(password)
+                Email = model.email.ToLower().Replace(" ", ""),
+                Password = EncryptionHelpers.ComputeHash(model.password)
             });
             await _dbContext.SaveChangesAsync();
-            return Ok();
+            return StatusCode(200);
         }
 
         [HttpGet]
