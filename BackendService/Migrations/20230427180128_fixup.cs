@@ -5,7 +5,7 @@
 namespace BackendService.Migrations
 {
     /// <inheritdoc />
-    public partial class test : Migration
+    public partial class fixup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace BackendService.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     MeasureUnit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    SellerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SellerId = table.Column<int>(type: "int", nullable: false),
                     ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

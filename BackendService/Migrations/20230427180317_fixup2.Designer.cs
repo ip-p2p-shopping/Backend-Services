@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BackendService.Migrations
 {
     [DbContext(typeof(ShoppingDbContext))]
-    [Migration("20230427154948_test")]
-    partial class test
+    [Migration("20230427180317_fixup2")]
+    partial class fixup2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
