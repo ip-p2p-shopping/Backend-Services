@@ -1,48 +1,49 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
+// using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BackendService.Migrations
-{
-    /// <inheritdoc />
-    public partial class adauga_adresa : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropIndex(
-                name: "IX_Users_Email",
-                table: "Users");
+// #nullable disable
 
-            migrationBuilder.AddColumn<string>(
-                name: "Address",
-                table: "Users",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+// namespace BackendService.Migrations
+// {
+//     /// <inheritdoc />
+//     public partial class adauga_adresa : Migration
+//     {
+//         /// <inheritdoc />
+//         protected override void Up(MigrationBuilder migrationBuilder)
+//         {
+//             migrationBuilder.DropIndex(
+//                 name: "IX_Users_Email",
+//                 table: "Users");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email",
-                unique: true);
-        }
+//             migrationBuilder.AddColumn<string>(
+//                 name: "Address",
+//                 table: "Users",
+//                 type: "nvarchar(max)",
+//                 nullable: false,
+//                 defaultValue: "");
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropIndex(
-                name: "IX_Users_Email",
-                table: "Users");
+//             migrationBuilder.CreateIndex(
+//                 name: "IX_Users_Email",
+//                 table: "Users",
+//                 column: "Email",
+//                 unique: true);
+//         }
 
-            migrationBuilder.DropColumn(
-                name: "Address",
-                table: "Users");
+//         /// <inheritdoc />
+//         protected override void Down(MigrationBuilder migrationBuilder)
+//         {
+//             migrationBuilder.DropIndex(
+//                 name: "IX_Users_Email",
+//                 table: "Users");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
-                table: "Users",
-                column: "Email");
-        }
-    }
-}
+//             migrationBuilder.DropColumn(
+//                 name: "Address",
+//                 table: "Users");
+
+//             migrationBuilder.CreateIndex(
+//                 name: "IX_Users_Email",
+//                 table: "Users",
+//                 column: "Email");
+//         }
+//     }
+// }

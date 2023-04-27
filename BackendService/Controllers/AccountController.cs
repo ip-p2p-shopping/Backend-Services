@@ -40,7 +40,7 @@ namespace BackendService
             {
                 return StatusCode(404);
             }
-            if (user.Password != EncryptionHelpers.ComputeHash(model.password))
+            if (user.Password != EncryptionHelpers.ComputeHash(model.password, model.salt))
             {
                 return StatusCode(401);
             }
@@ -59,10 +59,12 @@ namespace BackendService
             {
                 return StatusCode(409);
             }
+            string salt = EncryptionHelpers.CreateSalt();
             await _dbContext.Users.AddAsync(new User()
             {
                 Email = model.email.ToLower().Replace(" ", ""),
-                Password = EncryptionHelpers.ComputeHash(model.password)
+                Salt = salt,
+                Password = EncryptionHelpers.ComputeHash(model.password, salt)
             });
             await _dbContext.SaveChangesAsync();
             return StatusCode(200);
@@ -72,7 +74,7 @@ namespace BackendService
         [Route("GetUserDetails")]
         public async Task<IActionResult> GetUserDetails()
         {
-            return Ok(await _dbContext.Users.Where(x => x.Id == UserId).Select(x => new
+                        return Ok(await _dbContext.Users.Where(x => x.Id == UserId).Select(x => new
             {
                 x.Id,
                 x.FirstName,
@@ -90,6 +92,7 @@ namespace BackendService
             _user.Email = user.Email.ToLower().Replace(" ", "");
             _user.Address = user.Address;
             _user.FirstName = user.FirstName;
+            _user.Salt = user.Salt;
             _user.LastName = user.LastName;
             await _dbContext.SaveChangesAsync();
             return Ok();

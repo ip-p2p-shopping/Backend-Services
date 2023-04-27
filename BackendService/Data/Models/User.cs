@@ -5,7 +5,7 @@ public class User
     public User()
     {
         Id = Guid.NewGuid().ToString();
-
+        
         FirstName = string.Empty;
         LastName = String.Empty;
     }
@@ -14,11 +14,14 @@ public class User
     
     public string Email { get; set; }
     
-    // TODO Should be hashed
+    // TODO Should be salted.
     public string Password { get; set; }
+
+    public string Salt { get; set; }
     
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    
+
+
     public string Address { get; set; }
 }
