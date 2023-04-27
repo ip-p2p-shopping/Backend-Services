@@ -91,6 +91,12 @@ namespace BackendService
             _user.Address = user.Address;
             _user.FirstName = user.FirstName;
             _user.LastName = user.LastName;
+
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                _user.Password = EncryptionHelpers.ComputeHash(user.Password);
+            }
+            
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
