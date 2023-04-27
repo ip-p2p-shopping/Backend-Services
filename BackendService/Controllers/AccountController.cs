@@ -62,7 +62,8 @@ namespace BackendService
             await _dbContext.Users.AddAsync(new User()
             {
                 Email = model.email.ToLower().Replace(" ", ""),
-                Password = EncryptionHelpers.ComputeHash(model.password)
+                Password = EncryptionHelpers.ComputeHash(model.password),
+                Address = ""
             });
             await _dbContext.SaveChangesAsync();
             return StatusCode(200);

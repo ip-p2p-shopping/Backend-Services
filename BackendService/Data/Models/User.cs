@@ -8,6 +8,7 @@ public class User
 
         FirstName = string.Empty;
         LastName = String.Empty;
+        Address = String.Empty;
     }
     
     public string Id { get; set; }
