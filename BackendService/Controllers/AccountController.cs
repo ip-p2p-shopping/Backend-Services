@@ -94,7 +94,6 @@ namespace BackendService
             _user.Address = user.Address;
             _user.FirstName = user.FirstName;
             _user.LastName = user.LastName;
-            _user.Salt = user.Salt;
             if (!string.IsNullOrEmpty(user.Password))
             {
                 _user.Password = EncryptionHelpers.ComputeHash(user.Password, user.Salt);
