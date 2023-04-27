@@ -24,7 +24,8 @@ public class ProductController : IdentityController
     [HttpGet(Name = "products")]
     public async Task<ActionResult<List<Product>>> Get()
     {
-        return Ok(await _context.Products.ToListAsync());
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 
     [HttpGet("{id}")]
@@ -33,6 +34,10 @@ public class ProductController : IdentityController
         var product = await _context.Products.FindAsync(id);
         if (product == null)
             return BadRequest("Product not found.");
+
+        if (product.SellerId != UserId)
+            return BadRequest("You're not allowed to view the product with id " + product.Id + ".");
+
         return Ok(product);
     }
 
@@ -43,7 +48,8 @@ public class ProductController : IdentityController
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
-        return Ok("Product added!");
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 
     [HttpPut("edit")]
@@ -67,7 +73,8 @@ public class ProductController : IdentityController
 
         await _context.SaveChangesAsync();
 
-        return Ok("Product edited!");
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }    
 
     [HttpDelete("delete/{id}")]
@@ -83,7 +90,8 @@ public class ProductController : IdentityController
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
 
-        return Ok("Product deleted!");
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 
     [HttpDelete("delete/")]
@@ -101,7 +109,8 @@ public class ProductController : IdentityController
         }
         await _context.SaveChangesAsync();
 
-        return Ok("Products deleted!");
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 
     [HttpPost("newFromFile")]
@@ -110,6 +119,7 @@ public class ProductController : IdentityController
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
-        return Ok(await _context.Products.ToListAsync());
+        var result = await _context.Products.ToListAsync();
+        return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 }
