@@ -40,7 +40,7 @@ namespace BackendService
             {
                 return StatusCode(404);
             }
-            if (user.Password != EncryptionHelpers.ComputeHash(model.password, model.salt))
+            if (user.Password != EncryptionHelpers.ComputeHash(model.password, user.Salt))
             {
                 return StatusCode(401);
             }
@@ -80,7 +80,8 @@ namespace BackendService
                 x.FirstName,
                 x.LastName,
                 x.Email,
-                x.Address
+                x.Address,
+                x.Salt
             }).FirstOrDefaultAsync());
         }
 

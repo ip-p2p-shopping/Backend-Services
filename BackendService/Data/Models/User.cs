@@ -8,6 +8,7 @@ public class User
         
         FirstName = string.Empty;
         LastName = String.Empty;
+        Address = String.Empty;
     }
     
     public string Id { get; set; }
@@ -21,7 +22,5 @@ public class User
     
     public string FirstName { get; set; }
     public string LastName { get; set; }
-
-
     public string Address { get; set; }
 }
