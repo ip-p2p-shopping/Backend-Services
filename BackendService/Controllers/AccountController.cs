@@ -75,13 +75,13 @@ namespace BackendService
         [Route("GetUserDetails")]
         public async Task<IActionResult> GetUserDetails()
         {
-                        return Ok(await _dbContext.Users.Where(x => x.Id == UserId).Select(x => new
+            return Ok(await _dbContext.Users.Where(x => x.Id == UserId).Select(x => new
             {
                 x.Id,
                 x.FirstName,
                 x.LastName,
                 x.Email,
-                x.Address,
+                x.Address
             }).FirstOrDefaultAsync());
         }
 
@@ -93,7 +93,6 @@ namespace BackendService
             _user.Email = user.Email.ToLower().Replace(" ", "");
             _user.Address = user.Address;
             _user.FirstName = user.FirstName;
-            _user.Salt = user.Salt;
             _user.LastName = user.LastName;
 
             if (!string.IsNullOrEmpty(user.Password))
