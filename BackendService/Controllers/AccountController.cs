@@ -81,5 +81,18 @@ namespace BackendService
                 x.Address
             }).FirstOrDefaultAsync());
         }
+
+        [HttpPost]
+        [Route("UpdateUserDetails")]
+        public async Task<IActionResult> UpdateUserDetails(User user)
+        {
+            var _user = await _dbContext.Users.FindAsync(UserId);
+            _user.Email = user.Email;
+            _user.Address = user.Address;
+            _user.FirstName = user.FirstName;
+            _user.LastName = user.LastName;
+            await _dbContext.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
