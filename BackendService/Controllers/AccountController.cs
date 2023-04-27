@@ -72,7 +72,14 @@ namespace BackendService
         [Route("GetUserDetails")]
         public async Task<IActionResult> GetUserDetails()
         {
-            return Ok(await _dbContext.Users.FindAsync(UserId));
+            return Ok(await _dbContext.Users.Where(x => x.Id == UserId).Select(x => new
+            {
+                x.Id,
+                x.FirstName,
+                x.LastName,
+                x.Email,
+                x.Address
+            }).FirstOrDefaultAsync());
         }
     }
 }
