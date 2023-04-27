@@ -65,6 +65,7 @@ namespace BackendService
                 Email = model.email.ToLower().Replace(" ", ""),
                 Salt = salt,
                 Password = EncryptionHelpers.ComputeHash(model.password, salt)
+                Address = ""
             });
             await _dbContext.SaveChangesAsync();
             return StatusCode(200);
@@ -94,6 +95,12 @@ namespace BackendService
             _user.FirstName = user.FirstName;
             _user.Salt = user.Salt;
             _user.LastName = user.LastName;
+
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                _user.Password = EncryptionHelpers.ComputeHash(user.Password);
+            }
+            
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
