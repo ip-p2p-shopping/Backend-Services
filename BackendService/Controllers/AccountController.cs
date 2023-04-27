@@ -62,7 +62,8 @@ namespace BackendService
             await _dbContext.Users.AddAsync(new User()
             {
                 Email = model.email.ToLower().Replace(" ", ""),
-                Password = EncryptionHelpers.ComputeHash(model.password)
+                Password = EncryptionHelpers.ComputeHash(model.password),
+                Address = ""
             });
             await _dbContext.SaveChangesAsync();
             return StatusCode(200);
@@ -91,6 +92,12 @@ namespace BackendService
             _user.Address = user.Address;
             _user.FirstName = user.FirstName;
             _user.LastName = user.LastName;
+
+            if (!string.IsNullOrEmpty(user.Password))
+            {
+                _user.Password = EncryptionHelpers.ComputeHash(user.Password);
+            }
+            
             await _dbContext.SaveChangesAsync();
             return Ok();
         }
