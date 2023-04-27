@@ -3,12 +3,13 @@ using BackendService.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using BackendService.Utils;
 
 namespace BackendService;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductController : ControllerBase
+public class ProductController : IdentityController
 {
 
     private readonly ShoppingDbContext _context;
@@ -38,10 +39,11 @@ public class ProductController : ControllerBase
     [HttpPost("new")]
     public async Task<ActionResult<List<Product>>> AddProduct(Product product)
     {
+        product.SellerId = UserId;
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
-        return Ok(await _context.Products.ToListAsync());
+        return Ok("Product added!");
     }
 
     [HttpPut("edit")]
@@ -51,12 +53,21 @@ public class ProductController : ControllerBase
         if (product == null)
             return BadRequest("Product not found.");
 
+        if (product.SellerId != UserId)
+            return BadRequest("You're not allowed to edit the product with id " + product.Id + ".");
+
+
         product.Name = request.Name;
         product.Price = request.Price;
+        product.Quantity = request.Quantity;
+        product.MeasureUnit = request.MeasureUnit;
+        product.Stock = request.Stock;
+        product.SellerId = UserId;
+        product.ImageURL = request.ImageURL;
 
         await _context.SaveChangesAsync();
 
-        return Ok(await _context.Products.ToListAsync());
+        return Ok("Product edited!");
     }    
 
     [HttpDelete("delete/{id}")]
@@ -65,11 +76,14 @@ public class ProductController : ControllerBase
         var product = await _context.Products.FindAsync(id);
         if (product == null)
             return BadRequest("Product not found.");
+        
+        if (product.SellerId != UserId)
+            return BadRequest("You're not allowed to delete the product with id " + id + ".");
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
 
-        return Ok(await _context.Products.ToListAsync());
+        return Ok("Product deleted!");
     }
 
     [HttpDelete("delete/")]
@@ -78,13 +92,16 @@ public class ProductController : ControllerBase
         for(int i = 0; i < Ids.Count; ++i){
         var product = await _context.Products.FindAsync(Ids[i]);
         if (product == null)
-            return BadRequest("Product with id + " + Ids[i] + " not found.");
+            return BadRequest("Product with id " + Ids[i] + " not found.");
+
+        if(product.SellerId != UserId)
+            return BadRequest("You're not allowed to remove the product with id " + Ids[i] + ".");
 
         _context.Products.Remove(product);
         }
         await _context.SaveChangesAsync();
 
-        return Ok(await _context.Products.ToListAsync());
+        return Ok("Products deleted!");
     }
 
     [HttpPost("newFromFile")]

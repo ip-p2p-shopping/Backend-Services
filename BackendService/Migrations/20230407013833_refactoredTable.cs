@@ -34,7 +34,7 @@ namespace BackendService.Migrations
             migrationBuilder.AddColumn<int>(
                 name: "SellerId",
                 table: "Products",
-                type: "int",
+                type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: 0);
 
