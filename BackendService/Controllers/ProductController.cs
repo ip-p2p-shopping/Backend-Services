@@ -67,7 +67,6 @@ public class ProductController : IdentityController
         product.Price = request.Price;
         product.Quantity = request.Quantity;
         product.MeasureUnit = request.MeasureUnit;
-        product.Stock = request.Stock;
         product.SellerId = UserId;
         product.ImageURL = request.ImageURL;
 
