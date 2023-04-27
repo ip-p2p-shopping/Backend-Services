@@ -81,7 +81,6 @@ namespace BackendService
                 x.LastName,
                 x.Email,
                 x.Address,
-                x.Salt
             }).FirstOrDefaultAsync());
         }
 
