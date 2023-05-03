@@ -25,7 +25,7 @@ public class ClientController : IdentityController
 
 
     [HttpGet("productsCategory")]
-    public async Task<IActionResult> GetProducts(string search)
+    public async Task<IActionResult> GetProducts(string search = "")
     {
         var products = await _context.Products.ToListAsync();
         if(!string.IsNullOrEmpty(search)) {
