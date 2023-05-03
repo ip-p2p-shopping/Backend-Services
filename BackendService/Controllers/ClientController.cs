@@ -25,9 +25,10 @@ public class ClientController : IdentityController
 
 
     [HttpGet("productsCategory")]
-    public async Task<ActionResult<List<Dictionary<string, object>>>> GetProducts()
+    public async Task<IActionResult> GetProducts()
     {
-        var products = await _context.Products.ToListAsync();
+        try {
+            var products = await _context.Products.ToListAsync();
 
         var categories = products.GroupBy(p => p.Category);
 
@@ -37,7 +38,7 @@ public class ClientController : IdentityController
         {
             var categoryDict = new Dictionary<string, object>();
             categoryDict["id"] = category.Key;
-            categoryDict["title"] = "Titlu categorie";
+            categoryDict["title"] = category.Key;
             categoryDict["subtitle"] = "Subtitlu categorie";
 
             var categoryProducts = category.Take(4).ToList();
@@ -49,6 +50,10 @@ public class ClientController : IdentityController
         }
 
         return Ok(response);
+        }
+        catch(Exception ex) {
+            return Ok(ex.ToString());
+        }
     }
 
 
