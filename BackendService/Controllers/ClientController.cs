@@ -25,13 +25,14 @@ public class ClientController : IdentityController
 
 
     [HttpGet("productsCategory")]
-    public async Task<IActionResult> GetProducts()
+    public async Task<IActionResult> GetProducts(string search)
     {
-        try {
-            var products = await _context.Products.ToListAsync();
-
+        var products = await _context.Products.ToListAsync();
+        if(!string.IsNullOrEmpty(search)) {
+            search = search.ToLower();
+            products = products.Where(x => x.Name.ToLower().Contains(search) || x.Category.ToLower().Contains(search)).ToList();
+        }
         var categories = products.GroupBy(p => p.Category);
-
         var response = new List<Dictionary<string, object>>();
 
         foreach (var category in categories)
@@ -50,10 +51,6 @@ public class ClientController : IdentityController
         }
 
         return Ok(response);
-        }
-        catch(Exception ex) {
-            return Ok(ex.ToString());
-        }
     }
 
 
