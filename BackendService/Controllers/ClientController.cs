@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BackendService;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ClientController : IdentityController
