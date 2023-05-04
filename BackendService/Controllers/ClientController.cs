@@ -34,6 +34,7 @@ public class ClientController : IdentityController
         }
         if(!string.IsNullOrEmpty(searchCategory))
         {
+            searchCategory = searchCategory.ToLower();
             products = products.Where(x => x.Category.ToLower().Contains(searchCategory)).ToList();
         }
         var categories = products.GroupBy(p => p.Category);
@@ -57,63 +58,15 @@ public class ClientController : IdentityController
         return Ok(response);
     }
 
-
-    [HttpGet("products")]
-    public async Task<ActionResult<List<Dictionary<string, object>>>> GetProductsByCategory(string category = null, string search = null)
-    {
-        var productsQuery = _context.Products.AsQueryable();
-
-        if (!string.IsNullOrEmpty(category))
-            productsQuery = productsQuery.Where(p => p.Category == category);
-
-        if (!string.IsNullOrEmpty(search))
-            productsQuery = productsQuery.Where(p => p.Name.Contains(search));
-
-        if (string.IsNullOrEmpty(category) && string.IsNullOrEmpty(search))
-            return BadRequest("Please provide a valid category and/or search parameter.");
-
-        var products = await productsQuery.ToListAsync();
-
-        var response = new List<Dictionary<string, object>>();
-
-        foreach (var product in products)
-        {
-            var productDict = new Dictionary<string, object>();
-            productDict["id"] = product.Id;
-            productDict["title"] = product.Name;
-            productDict["image"] = product.ImageURL;
-            productDict["images"] = product.ImageURLs;
-            productDict["priceRange"] = "$" + product.Price.ToString("0.00");
-            productDict["description"] = product.Description;
-
-            response.Add(productDict);
-        }
-
-        return Ok(response);
-    }
-
-
     [HttpGet("products/{id}")]
-    public async Task<ActionResult<Dictionary<string, object>>> GetProductDetails(int id)
+    public async Task<ActionResult> GetProductDetails(int id)
     {
         var product = await _context.Products.FindAsync(id);
 
         if (product == null)
             return BadRequest("Product not found.");
 
-
-        var response = new Dictionary<string, object>();
-        response["id"] = product.Id;
-        response["title"] = product.Name;
-        response["description"] = product.Description;
-        
-        response["image"] = product.ImageURL;
-        response["images"] = product.ImageURLs;
-        response["price"] = "$" + product.Price.ToString("0.00");
-        response["measureUnit"] = product.MeasureUnit;
-        response["sellerId"] = product.SellerId;
-
-        return Ok(response);
+        return Ok(product);
     }
 
 
