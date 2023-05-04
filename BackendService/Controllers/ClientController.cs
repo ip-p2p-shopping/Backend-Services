@@ -77,6 +77,7 @@ public class ClientController : IdentityController
             var productDict = new Dictionary<string, object>();
             productDict["id"] = product.Id;
             productDict["title"] = product.Name;
+            productDict["image"] = product.ImageURL;
             productDict["images"] = product.ImageURLs;
             productDict["priceRange"] = "$" + product.Price.ToString("0.00");
             productDict["description"] = product.Description;
@@ -101,6 +102,8 @@ public class ClientController : IdentityController
         response["id"] = product.Id;
         response["title"] = product.Name;
         response["description"] = product.Description;
+        
+        response["image"] = product.ImageURL;
         response["images"] = product.ImageURLs;
         response["price"] = "$" + product.Price.ToString("0.00");
         response["measureUnit"] = product.MeasureUnit;
