@@ -25,12 +25,16 @@ public class ClientController : IdentityController
 
 
     [HttpGet("productsCategory")]
-    public async Task<IActionResult> GetProducts(string search = "")
+    public async Task<IActionResult> GetProducts(string search = "", string searchCategory = "")
     {
         var products = await _context.Products.ToListAsync();
         if(!string.IsNullOrEmpty(search)) {
             search = search.ToLower();
             products = products.Where(x => x.Name.ToLower().Contains(search) || x.Category.ToLower().Contains(search)).ToList();
+        }
+        if(!string.IsNullOrEmpty(searchCategory))
+        {
+            products = products.Where(x => x.Category.ToLower().Contains(searchCategory)).ToList();
         }
         var categories = products.GroupBy(p => p.Category);
         var response = new List<Dictionary<string, object>>();
