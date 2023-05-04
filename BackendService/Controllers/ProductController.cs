@@ -67,10 +67,12 @@ public class ProductController : IdentityController
         product.Name = request.Name;
         product.Price = request.Price;
         product.Quantity = request.Quantity;
+        product.Description = request.Description;
         product.MeasureUnit = request.MeasureUnit;
         product.SellerId = UserId;
         product.ImageURL = request.ImageURL;
-
+        product.ImageURLs = request.ImageURLs; //pentru a modifica TOATE pozele unui produs
+        
         await _context.SaveChangesAsync();
 
         var result = await _context.Products.ToListAsync();
