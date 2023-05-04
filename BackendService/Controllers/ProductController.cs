@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
+using System.Text;
 
 namespace BackendService;
 
@@ -112,13 +113,33 @@ public class ProductController : IdentityController
         return Ok(result.Where(productR => productR.SellerId == UserId));
     }
 
-    [HttpPost("newFromFile")]
-    public async Task<ActionResult<List<Product>>> AddProducts(Product product)
+    [HttpPost("batch-upload")]
+    public async Task<ActionResult<List<Product>>> BatchUpload(List<IFormFile> file)
     {
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
 
-        var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        var result = new StringBuilder();
+        using (var reader = new StreamReader(file[0].OpenReadStream()))
+        {
+            reader.ReadLine();
+            while (reader.Peek() >= 0) {
+                string line = reader.ReadLine();
+                string[] elements = line.Split(",");
+                Product product = new Product(){
+                    Name = elements[0],
+                    Price = Int32.Parse(elements[1]),
+                    Quantity = Int32.Parse(elements[2]),
+                    MeasureUnit = elements[3],
+                    ImageURL = elements[4],
+                    SellerId = UserId
+                };
+                _context.Products.Add(product);
+            }
+                await _context.SaveChangesAsync();
+                
+        }
+
+        var productList = await _context.Products.ToListAsync();
+        return Ok(productList.Where(productR => productR.SellerId == UserId));
     }
+
 }
