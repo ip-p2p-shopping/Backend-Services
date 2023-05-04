@@ -13,6 +13,8 @@ public class ShoppingDbContext : DbContext
     
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Location> Locations { get; set; }
+    public DbSet<LocationProduct> LocationProducts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,5 +22,7 @@ public class ShoppingDbContext : DbContext
             .HasIndex(b => b.Id);
         modelBuilder.Entity<User>()
             .HasIndex(b => b.Email).IsUnique();
+        modelBuilder.Entity<LocationProduct>()
+            .HasKey(lp => new { lp.LocationId, lp.ProductId }); 
     }
 }
