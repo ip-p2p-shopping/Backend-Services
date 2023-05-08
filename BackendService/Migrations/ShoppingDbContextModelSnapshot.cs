@@ -21,43 +21,6 @@ namespace BackendService.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BackendService.Data.Models.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Latitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Longitude")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
-                });
-
-            modelBuilder.Entity("BackendService.Data.Models.LocationProduct", b =>
-                {
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("LocationId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("LocationProducts");
-                });
-
             modelBuilder.Entity("BackendService.Data.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -105,7 +68,7 @@ namespace BackendService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("BackendService.Data.Models.User", b =>
@@ -140,36 +103,7 @@ namespace BackendService.Migrations
 
                     b.HasIndex("Id");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("BackendService.Data.Models.LocationProduct", b =>
-                {
-                    b.HasOne("BackendService.Data.Models.Location", "Location")
-                        .WithMany("LocationProducts")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BackendService.Data.Models.Product", "Product")
-                        .WithMany("LocationProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("BackendService.Data.Models.Location", b =>
-                {
-                    b.Navigation("LocationProducts");
-                });
-
-            modelBuilder.Entity("BackendService.Data.Models.Product", b =>
-                {
-                    b.Navigation("LocationProducts");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }
