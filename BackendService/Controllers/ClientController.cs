@@ -73,7 +73,7 @@ public class ClientController : IdentityController
     }
 
     [HttpPost("newProductByClient")]
-    public async Task<bool> AddProductByClient(ProductIntroducedByClientModel model)
+    public async Task<bool> AddProductByClient([FromBody]ProductIntroducedByClientModel model)
     {
         try
         {
