@@ -24,20 +24,27 @@ public class ShoppingListController : IdentityController
     }
 
     [HttpPost("new")]
-    public async Task<ActionResult<List<Product>>> AddProduct(ShoppingProduct shoppingProduct)    {
-        var shoppingInstance = new ShoppingInstance
+    public async Task<bool> AddProduct([FromBody]ShoppingProduct shoppingProduct)
+    {
+        try
         {
-            UserId = UserId,
-            ProductId = shoppingProduct.ProductId,
-            Quantity = shoppingProduct.Quantity,
-            Bought = false
-        };
+            var shoppingInstance = new ShoppingInstance
+            {
+                UserId = UserId,
+                ProductId = shoppingProduct.ProductId,
+                Quantity = shoppingProduct.Quantity,
+                Bought = false
+            };
 
-        _context.ShoppingInstances.Add(shoppingInstance);
-        await _context.SaveChangesAsync();
+            _context.ShoppingInstances.Add(shoppingInstance);
+            await _context.SaveChangesAsync();
 
-        var result = await _context.ShoppingInstances.ToListAsync();
-        return Ok(result.Where(shoppingInstanceR => shoppingInstanceR.UserId == shoppingInstance.UserId));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 
     [HttpPut("edit")]
