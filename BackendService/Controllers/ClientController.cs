@@ -73,7 +73,7 @@ public class ClientController : IdentityController
     }
 
     [HttpPost("newProductByClient")]
-    public async Task<bool> AddProductByClient(ProductIntroducedByClientModel model)
+    public async Task<object> AddProductByClient(ProductIntroducedByClientModel model)
     {
         try
         {
@@ -116,7 +116,7 @@ public class ClientController : IdentityController
         }
         catch (Exception ex)
         {
-            return false;
+            return ex.ToString();
         }
     }
 }
