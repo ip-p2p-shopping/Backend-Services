@@ -59,39 +59,52 @@ public class ShoppingListController : IdentityController
         }
     }
 
-    [HttpPut("edit")]
-    public async Task<ActionResult<List<Product>>> UpdateQuantity(ShoppingProduct shoppingProduct, int newQuantity)
+    [HttpPost("edit")]
+    public async Task<bool> UpdateQuantity([FromBody]ShoppingProduct shoppingProduct)
     {
-        var shoppingInstance = await _context.ShoppingInstances
-        .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
-
-        if (shoppingInstance != null)
+        try
         {
-            shoppingInstance.Quantity = newQuantity;
-            await _context.SaveChangesAsync();
-        }
+            var shoppingInstance = await _context.ShoppingInstances
+                .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
 
-        var result = await _context.ShoppingInstances.ToListAsync();
-        return Ok(result.Where(shoppingInstanceR => shoppingInstanceR.UserId == shoppingInstance.UserId));
+            if (shoppingInstance != null)
+            {
+                shoppingInstance.Quantity = shoppingInstance.Quantity;
+                await _context.SaveChangesAsync();
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
     
 
     [HttpDelete("delete/{id}")]
-    public async Task<ActionResult<List<Product>>> Delete(ShoppingProduct shoppingProduct)
+    public async Task<bool> Delete(int id)
     {
-         var shoppingInstance = await _context.ShoppingInstances
-        .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
+        try
+        {
+            var shoppingInstance = await _context.ShoppingInstances
+                .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == id);
 
-        if (shoppingInstance == null)
-            return BadRequest("Shopping Instance not found.");
-        
-        if (shoppingInstance.UserId != UserId)
-            return BadRequest("You're not allowed to delete the product with id " + shoppingInstance.ProductId + ".");
+            if (shoppingInstance == null)
+                return false;
 
-        _context.ShoppingInstances.Remove(shoppingInstance);
-        await _context.SaveChangesAsync();
+            if (shoppingInstance.UserId != UserId)
+                return false;
 
-        var result = await _context.ShoppingInstances.ToListAsync();
-        return Ok(result.Where(shoppingInstanceR => shoppingInstanceR.UserId == shoppingInstance.UserId));
+            _context.ShoppingInstances.Remove(shoppingInstance);
+            await _context.SaveChangesAsync();
+
+            var result = await _context.ShoppingInstances.ToListAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 }
