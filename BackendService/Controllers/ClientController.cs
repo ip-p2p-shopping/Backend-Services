@@ -152,15 +152,15 @@ public class ClientController : IdentityController
         }
     }
 
-    [HttpPost("uploadImage/{productId}")]
-    public async Task<ActionResult> UploadFile(int productId, [FromForm(Name = "file")]IFormFile file) {
+    [HttpPost("uploadImage")]
+    public async Task<ActionResult> UploadFile([FromForm(Name = "file")]IFormFile file) {
         if(file == null) {
             return BadRequest("No file");
         }
         try {
-            string path = Path.Combine(_hostingEnvironment.WebRootPath, $"{productId}.png");
-            var product = await _context.Products.FindAsync(productId);
-            product.ImageURLs = new List<string>() { $"/{productId}.png" };
+            string path = Path.Combine(_hostingEnvironment.WebRootPath, $"{file.Name}.png");
+            var product = await _context.Products.FindAsync(Convert.ToInt32(file.Name));
+            product.ImageURLs = new List<string>() { $"/{file.Name}.png" };
             await _context.SaveChangesAsync();
             using (Stream fileStream = new FileStream(path, FileMode.Create)) {
                 await file.CopyToAsync(fileStream);
