@@ -15,6 +15,7 @@ public class ShoppingDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
+    public DbSet<ShoppingInstance> ShoppingInstances { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,5 +31,9 @@ public class ShoppingDbContext : DbContext
             .HasConversion(
                 v => JsonConvert.SerializeObject(v),
                 v => JsonConvert.DeserializeObject<List<string>>(v));
+
+        modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.ProductId);
+        modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.UserId);
+        modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.Bought);
     }
 }
