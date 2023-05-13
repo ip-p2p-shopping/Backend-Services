@@ -19,11 +19,13 @@ public class ClientController : IdentityController
 
     private readonly ShoppingDbContext _context;
     private readonly ILogger<ClientController> _logger;
+    private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
 
-    public ClientController(ILogger<ClientController> logger, ShoppingDbContext context)
+    public ClientController(ILogger<ClientController> logger, ShoppingDbContext context, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
     {
         _logger = logger;
         _context = context;
+        _hostingEnvironment = hostingEnvironment;
     }
 
 
@@ -102,6 +104,7 @@ public class ClientController : IdentityController
     [HttpPost("newProductByClient")]
     public async Task<object> AddProductByClient([FromBody]ProductIntroducedByClientModel model)
     {
+        int productId = -1;
         try
         {
             bool exitentStore = false;
@@ -115,9 +118,10 @@ public class ClientController : IdentityController
                         Price = model.Price,
                         Description = model.Description,
                         StoreId = store.Id,
-                        ImageURLs = new List<string>() { model.ImgURL }
+                        ImageURLs = new List<string>() { }
                     };
                     _context.Products.Add(productIntroducedByClient);
+                    productId = productIntroducedByClient.Id;
                 }
             }
             if(!exitentStore){
@@ -126,9 +130,10 @@ public class ClientController : IdentityController
                     Category = model.Category,
                     Price = model.Price,
                     Description = model.Description,
-                    ImageURLs = new List<string>() { model.ImgURL }
+                    ImageURLs = new List<string>() { }
                 };
                 _context.Products.Add(newProduct);
+                productId = newProduct.Id;
 
                 var ghostLocation = new GhostLocation{
                     ProductId = newProduct.Id,
@@ -139,11 +144,31 @@ public class ClientController : IdentityController
             }
             await _context.SaveChangesAsync();
 
-            return true;
+            return productId;
         }
         catch (Exception ex)
         {
             return ex.ToString();
+        }
+    }
+
+    [HttpPost("uploadImage/{productId}")]
+    public async Task<ActionResult> UploadFile(int productId, [FromForm(Name = "file")]IFormFile file) {
+        if(file == null) {
+            return BadRequest("No file");
+        }
+        try {
+            string path = Path.Combine(_hostingEnvironment.WebRootPath, $"{productId}.png");
+            var product = await _context.Products.FindAsync(productId);
+            product.ImageURLs = new List<string>() { $"/{productId}.png" };
+            await _context.SaveChangesAsync();
+            using (Stream fileStream = new FileStream(path, FileMode.Create)) {
+                await file.CopyToAsync(fileStream);
+            }
+            return Ok();
+        }
+        catch(Exception ex) {
+            return BadRequest(ex.ToString());
         }
     }
 }

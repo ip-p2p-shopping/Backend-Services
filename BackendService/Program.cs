@@ -54,6 +54,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 // global cors policy
 app.UseCors(x => x
