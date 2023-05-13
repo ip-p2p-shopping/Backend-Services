@@ -119,4 +119,37 @@ public class ClientController : IdentityController
             return false;
         }
     }
+
+    [HttpGet("productsLocations/{id}")]
+    public async Task<ActionResult<List<ProductLocation>>> GetProductLocations(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        var store = await _context.Stores.FindAsync(product.StoreId);
+
+        var productLocations = new List<ProductLocation>();
+
+        var productLocation = new ProductLocation {
+            ProductId = id,
+            Lat = store.Lat,
+            Long = store.Long
+        };
+
+        productLocations.Add(productLocation);
+
+        foreach (var ghostLocation in _context.GhostLocations.ToList())
+        {
+            if(ghostLocation.ProductId == id)
+            {
+                var productLocation1 = new ProductLocation {
+                    ProductId = id,
+                    Lat = ghostLocation.Lat,
+                    Long = ghostLocation.Long
+                };
+
+                productLocations.Add(productLocation1);
+            }
+        }
+        return Ok(productLocations);
+    }
+
 }
