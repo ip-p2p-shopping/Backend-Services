@@ -72,7 +72,7 @@ public class ClientController : IdentityController
         return Ok(product);
     }
 
-    [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+    [RequestFormLimits(ValueLengthLimit = 209715200)]
     [HttpPost("newProductByClient")]
     public async Task<object> AddProductByClient([FromBody]ProductIntroducedByClientModel model)
     {
