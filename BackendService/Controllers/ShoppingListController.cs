@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
 using System.Text;
 using BackendService.Models;
+using BackendService.Services;
 
 namespace BackendService;
 
@@ -133,14 +134,25 @@ public class ShoppingListController : IdentityController
     }
     
     [HttpPost("markAsFound")]
-    public async Task<bool> UpdateBought([FromBody]ShoppingProduct shoppingProduct)
+    public async Task<bool> UpdateBought([FromBody]FoundProductDetails shoppingProduct)
     {
         try
         {
             var shoppingInstance = await _context.ShoppingInstances
                 .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
-
             shoppingInstance.Bought = true;
+
+            var product = await _context.Products.FindAsync(shoppingInstance.ProductId);
+            var store = await _context.Stores.FindAsync(product.StoreId);
+
+            if(LocationHelper.VerifyLocation(store.Lat, store.Long, shoppingProduct.Lat, shoppingProduct.Long)) {
+                _context.GhostLocations.Add(new GhostLocation{
+                    ProductId = shoppingProduct.ProductId,
+                    Lat = shoppingProduct.Lat,
+                    Long = shoppingProduct.Long
+                });
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
