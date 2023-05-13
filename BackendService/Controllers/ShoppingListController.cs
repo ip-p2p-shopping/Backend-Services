@@ -140,20 +140,27 @@ public class ShoppingListController : IdentityController
         {
             var shoppingInstance = await _context.ShoppingInstances
                 .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
+            if(shoppingInstance == null) return false;
+            
             shoppingInstance.Bought = true;
+            await _context.SaveChangesAsync();
 
             var product = await _context.Products.FindAsync(shoppingInstance.ProductId);
-            var store = await _context.Stores.FindAsync(product.StoreId);
+            if(product)
+            {
+                var store = await _context.Stores.FindAsync(product.StoreId);
+                if(store) {
+                    if(LocationHelper.VerifyLocation(store.Lat, store.Long, shoppingProduct.Lat, shoppingProduct.Long)) {
+                        _context.GhostLocations.Add(new GhostLocation{
+                            ProductId = shoppingProduct.ProductId,
+                            Lat = shoppingProduct.Lat,
+                            Long = shoppingProduct.Long
+                        });
+                }
 
-            if(LocationHelper.VerifyLocation(store.Lat, store.Long, shoppingProduct.Lat, shoppingProduct.Long)) {
-                _context.GhostLocations.Add(new GhostLocation{
-                    ProductId = shoppingProduct.ProductId,
-                    Lat = shoppingProduct.Lat,
-                    Long = shoppingProduct.Long
-                });
+                await _context.SaveChangesAsync();
+                }
             }
-
-            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception ex)
