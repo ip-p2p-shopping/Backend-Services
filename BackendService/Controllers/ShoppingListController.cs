@@ -24,14 +24,14 @@ public class ShoppingListController : IdentityController
     }
 
     [HttpGet("products")]
-    public async Task<ActionResult<object>> GetShoppingList()
+    public async Task<object[]> GetShoppingList()
     {
         var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == false).ToListAsync();
 
-        return Ok(shoppingInstances.Select(async si => new {
+        return shoppingInstances.Select(async si => new {
             quantity = si.Quantity,
             product = await _context.Products.FindAsync(si.ProductId)
-        }));
+        }).ToArray();
     }
     
 
