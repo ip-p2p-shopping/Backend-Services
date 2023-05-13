@@ -16,6 +16,8 @@ public class ShoppingDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<ShoppingInstance> ShoppingInstances { get; set; }
+    public DbSet<FavouriteProduct> FavouriteProducts { get; set; }
+    public DbSet<FavouriteStore> FavouriteStores { get; set; }
     public DbSet<GhostLocation> GhostLocations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
