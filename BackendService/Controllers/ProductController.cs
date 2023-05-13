@@ -48,6 +48,7 @@ public class ProductController : IdentityController
     public async Task<ActionResult<List<Product>>> AddProduct(Product product)
     {
         product.StoreId = await GetStoreId(UserId);;
+        product.MaxPrice = product.Price;
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
@@ -69,6 +70,7 @@ public class ProductController : IdentityController
 
         product.Name = request.Name;
         product.Price = request.Price;
+        product.MaxPrice = request.Price;
         product.Quantity = request.Quantity;
         product.Category = request.Category;
         product.Description = request.Description;

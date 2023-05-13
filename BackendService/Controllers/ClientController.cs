@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
 using Microsoft.AspNetCore.Authorization;
+using BackendService.Models;
 
 namespace BackendService;
 
@@ -67,6 +68,81 @@ public class ClientController : IdentityController
             return BadRequest("Product not found.");
 
         return Ok(product);
+    }
+
+    [HttpPost("newFavouriteProduct")]
+    public async Task<bool> AddFavouriteProduct(ShoppingProduct shoppingProduct)
+    {
+        try
+        {
+            var favouriteProduct = new FavouriteProduct
+            {
+                UserId = UserId,
+                ProductId = shoppingProduct.ProductId
+            };
+
+            _context.FavouriteProducts.Add(favouriteProduct);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    [HttpGet("products")]
+    public async Task<ActionResult<object>> GetShoppingList()
+    {
+        var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == false).ToListAsync();
+
+        return Ok(shoppingInstances.Select(async si => new {
+            quantity = si.Quantity,
+            product = await _context.Products.FindAsync(si.ProductId)
+        }));
+    }
+
+    [HttpGet("favouriteProducts")]
+    public async Task<ActionResult<object>> GetFavouriteProducts()
+    {
+        var favouriteProducts = await _context.FavouriteProducts.Where(si => si.UserId == UserId).ToListAsync();
+
+        return Ok(favouriteProducts.Select(async si => new {
+            product = await _context.Products.FindAsync(si.ProductId)
+        }));
+    }
+
+    [HttpPost("newFavouriteStore")]
+    public async Task<bool> AddFavouriteStore(StoreRegisterModel storeRegisterModel)
+    {
+        try
+        {
+            var favouriteStore = new FavouriteStore
+            {
+                UserId = UserId,
+                StoreName = storeRegisterModel.name
+            };
+
+            _context.FavouriteStores.Add(favouriteStore);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
+
+    [HttpGet("favouriteStores")]
+    public async Task<ActionResult<object>> GetFavouriteStores()
+    {
+        var favouriteStores = await _context.FavouriteStores.Where(si => si.UserId == UserId).ToListAsync();
+
+        return Ok(favouriteStores.Select(async si => new {
+            store = await _context.Stores.FindAsync(si.StoreName)
+        }));
     }
 
 
