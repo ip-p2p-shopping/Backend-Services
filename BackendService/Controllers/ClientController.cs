@@ -133,10 +133,10 @@ public class ClientController : IdentityController
                     ImageURLs = new List<string>() { }
                 };
                 _context.Products.Add(newProduct);
-                productId = newProduct.Id;
+                await _context.SaveChangesAsync();
 
                 var ghostLocation = new GhostLocation{
-                    ProductId = newProduct.Id,
+                    ProductId = _context.Products.Select(x => x.Id).Max(),
                     Lat = model.Lat,
                     Long = model.Long 
                 };
@@ -144,7 +144,7 @@ public class ClientController : IdentityController
             }
             await _context.SaveChangesAsync();
 
-            return productId;
+            return _context.Products.Select(x => x.Id).Max();
         }
         catch (Exception ex)
         {
