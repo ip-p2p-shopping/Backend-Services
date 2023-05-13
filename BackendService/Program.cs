@@ -44,7 +44,7 @@ using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
     var dbContext = service.GetService<ShoppingDbContext>();
-    dbContext?.Database.EnsureDeleted();    
+    // dbContext?.Database.EnsureDeleted();    
     dbContext?.Database.Migrate();
 }
 
