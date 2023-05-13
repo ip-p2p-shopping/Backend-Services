@@ -134,7 +134,7 @@ public class ShoppingListController : IdentityController
     }
     
     [HttpPost("markAsFound")]
-    public async Task<bool> UpdateBought([FromBody]FoundProductDetails shoppingProduct)
+    public async Task<object> UpdateBought([FromBody]FoundProductDetails shoppingProduct)
     {
         try
         {
@@ -146,7 +146,7 @@ public class ShoppingListController : IdentityController
             await _context.SaveChangesAsync();
 
             var product = await _context.Products.FindAsync(shoppingInstance.ProductId);
-            if(product)
+            if(product != null)
             {
                 var store = await _context.Stores.FindAsync(product.StoreId);
                 if(store) {
