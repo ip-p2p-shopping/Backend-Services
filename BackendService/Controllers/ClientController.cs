@@ -88,7 +88,7 @@ public class ClientController : IdentityController
                         Price = model.Price,
                         Description = model.Description,
                         StoreId = store.Id,
-                        ImageURL = model.ImgURL
+                        ImageURLs = new List<string>() { model.ImgURL }
                     };
                     _context.Products.Add(productIntroducedByClient);
                 }
@@ -99,7 +99,7 @@ public class ClientController : IdentityController
                     Category = model.Category,
                     Price = model.Price,
                     Description = model.Description,
-                    ImageURL = model.ImgURL
+                    ImageURLs = new List<string>() { model.ImgURL }
                 };
                 _context.Products.Add(newProduct);
 
