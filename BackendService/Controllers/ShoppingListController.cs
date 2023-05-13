@@ -52,7 +52,7 @@ public class ShoppingListController : IdentityController
         try
         {
             var existingInstance = await _context.ShoppingInstances
-                .Where(x => x.UserId == UserId && x.ProductId == shoppingProduct.ProductId).FirstOrDefaultAsync();
+                .Where(x => x.UserId == UserId && x.ProductId == shoppingProduct.ProductId && x.Bought == false).FirstOrDefaultAsync();
             if (existingInstance == null)
             {
                 var shoppingInstance = new ShoppingInstance
