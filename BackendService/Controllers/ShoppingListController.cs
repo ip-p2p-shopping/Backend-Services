@@ -40,15 +40,24 @@ public class ShoppingListController : IdentityController
     {
         try
         {
-            var shoppingInstance = new ShoppingInstance
+            var existingInstance = await _context.ShoppingInstances
+                .Where(x => x.UserId == UserId && x.ProductId == shoppingProduct.ProductId).FirstOrDefaultAsync();
+            if (existingInstance == null)
             {
-                UserId = UserId,
-                ProductId = shoppingProduct.ProductId,
-                Quantity = shoppingProduct.Quantity,
-                Bought = false
-            };
+                var shoppingInstance = new ShoppingInstance
+                {
+                    UserId = UserId,
+                    ProductId = shoppingProduct.ProductId,
+                    Quantity = shoppingProduct.Quantity,
+                    Bought = false
+                };
 
-            _context.ShoppingInstances.Add(shoppingInstance);
+                _context.ShoppingInstances.Add(shoppingInstance);   
+            }
+            else
+            {
+                existingInstance.Quantity += shoppingProduct.Quantity;
+            }
             await _context.SaveChangesAsync();
 
             return true;
@@ -67,7 +76,7 @@ public class ShoppingListController : IdentityController
             var shoppingInstance = await _context.ShoppingInstances
                 .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
 
-            shoppingInstance.Quantity = shoppingInstance.Quantity;
+            shoppingInstance.Quantity = shoppingProduct.Quantity;
             await _context.SaveChangesAsync();
             return true;
         }
