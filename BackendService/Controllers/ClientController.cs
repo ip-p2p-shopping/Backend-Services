@@ -118,7 +118,7 @@ public class ClientController : IdentityController
                         Price = model.Price,
                         Description = model.Description,
                         StoreId = store.Id,
-                        ImageURLs = new List<string>() { }
+                        ImageURLs = new List<string>() { model.ImgURL}
                     };
                     _context.Products.Add(productIntroducedByClient);
                     productId = productIntroducedByClient.Id;
@@ -130,7 +130,7 @@ public class ClientController : IdentityController
                     Category = model.Category,
                     Price = model.Price,
                     Description = model.Description,
-                    ImageURLs = new List<string>() { }
+                    ImageURLs = new List<string>() { model.ImgURL}
                 };
                 _context.Products.Add(newProduct);
                 await _context.SaveChangesAsync();
