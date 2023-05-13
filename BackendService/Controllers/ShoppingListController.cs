@@ -34,6 +34,17 @@ public class ShoppingListController : IdentityController
         }).ToArray();
     }
     
+    [HttpGet("history")]
+    public async Task<object[]> GetShoppingHistory()
+    {
+        var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == true).ToListAsync();
+
+        return shoppingInstances.Select(si => new {
+            quantity = si.Quantity,
+            product = _context.Products.Find(si.ProductId)
+        }).ToArray();
+    }
+
 
     [HttpPost("new")]
     public async Task<bool> AddProduct([FromBody]ShoppingProduct shoppingProduct)
