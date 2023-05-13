@@ -28,9 +28,9 @@ public class ShoppingListController : IdentityController
     {
         var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == false).ToListAsync();
 
-        return shoppingInstances.Select(async si => new {
+        return shoppingInstances.Select(si => new {
             quantity = si.Quantity,
-            product = await _context.Products.FindAsync(si.ProductId)
+            product = _context.Products.Find(si.ProductId)
         }).ToArray();
     }
     
