@@ -8,6 +8,6 @@ public class ProductWithLocations : Product
 }
 
 public class Location {
-    public double latitudine {get;set;}
-    public double longitudine {get;set;}
+    public double latitude {get;set;}
+    public double longitude {get;set;}
 }

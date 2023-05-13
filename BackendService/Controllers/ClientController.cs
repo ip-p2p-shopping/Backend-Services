@@ -85,15 +85,15 @@ public class ClientController : IdentityController
         var store = await _context.Stores.FindAsync(product.StoreId);
         if(store != null) {
             ploc.Locations.Add(new Location{
-                latitudine = store.Lat,
-                longitudine = store.Long
+                latitude = store.Lat,
+                longitude = store.Long
             });
         }
         foreach(var loc in _context.GhostLocations.Where(x => x.ProductId == product.Id))
         {
             ploc.Locations.Add(new Location{ 
-                latitudine = loc.Lat,
-                longitudine = loc.Long
+                latitude = loc.Lat,
+                longitude = loc.Long
             });
         }
 
