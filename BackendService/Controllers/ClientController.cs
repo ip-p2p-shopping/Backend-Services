@@ -62,14 +62,40 @@ public class ClientController : IdentityController
     }
 
     [HttpGet("products/{id}")]
-    public async Task<ActionResult> GetProductDetails(int id)
+    public async Task<ProductWithLocations> GetProductDetails(int id)
     {
         var product = await _context.Products.FindAsync(id);
 
-        if (product == null)
-            return BadRequest("Product not found.");
+        ProductWithLocations ploc = new ProductWithLocations();
+        ploc.Id = product.Id;
+        ploc.Name = product.Name;
+        ploc.Category = product.Category;
+        ploc.Price = product.Price;
+        ploc.MaxPrice = product.Price;
+        ploc.Quantity = product.Quantity;
+        ploc.Description = product.Description;
+        ploc.MeasureUnit = product.MeasureUnit;
+        ploc.StoreId = product.StoreId;
+        ploc.ImageURL = product.ImageURL;
+        ploc.ImageURLs = product.ImageURLs;
+        ploc.Locations = new List<Location>();
 
-        return Ok(product);
+        var store = await _context.Stores.FindAsync(product.StoreId);
+        if(store != null) {
+            ploc.Locations.Add(new Location{
+                latitudine = store.Lat,
+                longitudine = store.Long
+            });
+        }
+        foreach(var loc in _context.GhostLocations.Where(x => x.ProductId == product.Id))
+        {
+            ploc.Locations.Add(new Location{ 
+                latitudine = loc.Lat,
+                longitudine = loc.Long
+            });
+        }
+
+        return ploc;
     }
 
     [RequestFormLimits(ValueLengthLimit = 209715200)]
