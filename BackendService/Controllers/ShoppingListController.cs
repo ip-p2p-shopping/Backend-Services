@@ -86,6 +86,24 @@ public class ShoppingListController : IdentityController
         }
     }
     
+    [HttpPost("markAsFound")]
+    public async Task<bool> UpdateBought([FromBody]ShoppingProduct shoppingProduct)
+    {
+        try
+        {
+            var shoppingInstance = await _context.ShoppingInstances
+                .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
+
+            shoppingInstance.Bought = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;   
+        }
+    }
+    
 
     [HttpDelete("delete/{id}")]
     public async Task<bool> Delete(int id)
