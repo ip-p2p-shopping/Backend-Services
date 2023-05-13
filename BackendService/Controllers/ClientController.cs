@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
 using Microsoft.AspNetCore.Authorization;
+using BackendService.Models;
+using BackendService.Services;
+
 
 namespace BackendService;
 
@@ -69,5 +72,48 @@ public class ClientController : IdentityController
         return Ok(product);
     }
 
+    [HttpPost("newProductByClient")]
+    public async Task<bool> AddProductByClient(ProductIntroducedByClientModel model)
+    {
+        try
+        {
+            bool exitentStore = false;
+            foreach (var store in _context.Stores.ToList())
+            {
+                if(LocationHelper.VerifyLocation(store.Lat, store.Long, model.Lat, model.Long)){
+                    exitentStore = true;
+                    var productIntroducedByClient = new Product {
+                        Name = model.Name,
+                        Category = model.Category,
+                        Price = model.Price,
+                        Description = model.Description,
+                        StoreId = store.Id,
+                        ImageURL = model.ImgURL
+                    };
+                    _context.Products.Add(productIntroducedByClient);
+                }
+            }
+            if(!exitentStore){
+                var ghostLocation = new GhostLocation{
+                    ProductId = new Product{
+                        Name = model.Name,
+                        Category = model.Category,
+                        Price = model.Price,
+                        Description = model.Description,
+                        ImageURL = model.ImgURL
+                    }.Id,
+                    Lat = model.Lat,
+                    Long = model.Long 
+                };
+                _context.GhostLocations.Add(ghostLocation);
+            }
+            await _context.SaveChangesAsync();
 
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+    }
 }
