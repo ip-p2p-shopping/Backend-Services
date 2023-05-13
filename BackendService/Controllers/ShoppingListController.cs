@@ -67,12 +67,8 @@ public class ShoppingListController : IdentityController
             var shoppingInstance = await _context.ShoppingInstances
                 .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
 
-            if (shoppingInstance != null)
-            {
-                shoppingInstance.Quantity = shoppingInstance.Quantity;
-                await _context.SaveChangesAsync();
-            }
-
+            shoppingInstance.Quantity = shoppingInstance.Quantity;
+            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception ex)
