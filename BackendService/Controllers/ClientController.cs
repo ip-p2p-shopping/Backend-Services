@@ -94,14 +94,17 @@ public class ClientController : IdentityController
                 }
             }
             if(!exitentStore){
+                var newProduct = new Product{
+                    Name = model.Name,
+                    Category = model.Category,
+                    Price = model.Price,
+                    Description = model.Description,
+                    ImageURL = model.ImgURL
+                };
+                _context.Products.Add(newProduct);
+
                 var ghostLocation = new GhostLocation{
-                    ProductId = new Product{
-                        Name = model.Name,
-                        Category = model.Category,
-                        Price = model.Price,
-                        Description = model.Description,
-                        ImageURL = model.ImgURL
-                    }.Id,
+                    ProductId = newProduct.Id,
                     Lat = model.Lat,
                     Long = model.Long 
                 };
