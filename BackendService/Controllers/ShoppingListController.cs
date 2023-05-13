@@ -149,7 +149,7 @@ public class ShoppingListController : IdentityController
             if(product != null)
             {
                 var store = await _context.Stores.FindAsync(product.StoreId);
-                if(store) {
+                if(store != null) {
                     if(LocationHelper.VerifyLocation(store.Lat, store.Long, shoppingProduct.Lat, shoppingProduct.Long)) {
                         _context.GhostLocations.Add(new GhostLocation{
                             ProductId = shoppingProduct.ProductId,
