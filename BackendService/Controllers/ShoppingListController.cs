@@ -23,6 +23,18 @@ public class ShoppingListController : IdentityController
         _context = context;
     }
 
+    [HttpGet("products")]
+    public async Task<ActionResult<object>> GetShoppingList()
+    {
+        var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == false).ToListAsync();
+
+        return Ok(shoppingInstances.Select(async si => new {
+            quantity = si.Quantity,
+            product = await _context.Products.FindAsync(si.ProductId)
+        }));
+    }
+    
+
     [HttpPost("new")]
     public async Task<bool> AddProduct([FromBody]ShoppingProduct shoppingProduct)
     {
