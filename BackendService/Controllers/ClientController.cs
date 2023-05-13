@@ -153,7 +153,7 @@ public class ClientController : IdentityController
     }
 
     [HttpPost("uploadImage")]
-    public async Task<ActionResult> UploadFile([FromForm(Name = "file")]IFormFile file) {
+    public async Task<object> UploadFile([FromForm(Name = "file")]IFormFile file) {
         if(file == null) {
             return BadRequest("No file");
         }
@@ -165,10 +165,10 @@ public class ClientController : IdentityController
             using (Stream fileStream = new FileStream(path, FileMode.Create)) {
                 await file.CopyToAsync(fileStream);
             }
-            return Ok();
+            return "OK";
         }
         catch(Exception ex) {
-            return BadRequest(ex.ToString());
+            return ex.ToString();
         }
     }
 }
