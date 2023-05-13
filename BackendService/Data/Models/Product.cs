@@ -13,4 +13,5 @@ public class Product {
   public String SellerId { get; set; } = string.Empty;
   public String ImageURL { get; set; } = string.Empty;  
   public List<string> ImageURLs { get; set; } = new List<string>();
+  public List<LocationProduct> LocationProducts { get; set; } = new List<LocationProduct>();
 }
