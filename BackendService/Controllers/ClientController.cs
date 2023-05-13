@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using BackendService.Utils;
 using Microsoft.AspNetCore.Authorization;
 using BackendService.Models;
+using BackendService.Services;
+
 
 namespace BackendService;
 
@@ -70,18 +72,44 @@ public class ClientController : IdentityController
         return Ok(product);
     }
 
-    [HttpPost("newFavouriteProduct")]
-    public async Task<bool> AddFavouriteProduct(ShoppingProduct shoppingProduct)
+    [HttpPost("newProductByClient")]
+    public async Task<bool> AddProductByClient(ProductIntroducedByClientModel model)
     {
         try
         {
-            var favouriteProduct = new FavouriteProduct
+            bool exitentStore = false;
+            foreach (var store in _context.Stores.ToList())
             {
-                UserId = UserId,
-                ProductId = shoppingProduct.ProductId
-            };
+                if(LocationHelper.VerifyLocation(store.Lat, store.Long, model.Lat, model.Long)){
+                    exitentStore = true;
+                    var productIntroducedByClient = new Product {
+                        Name = model.Name,
+                        Category = model.Category,
+                        Price = model.Price,
+                        Description = model.Description,
+                        StoreId = store.Id,
+                        ImageURLs = new List<string>() { model.ImgURL }
+                    };
+                    _context.Products.Add(productIntroducedByClient);
+                }
+            }
+            if(!exitentStore){
+                var newProduct = new Product{
+                    Name = model.Name,
+                    Category = model.Category,
+                    Price = model.Price,
+                    Description = model.Description,
+                    ImageURLs = new List<string>() { model.ImgURL }
+                };
+                _context.Products.Add(newProduct);
 
-            _context.FavouriteProducts.Add(favouriteProduct);
+                var ghostLocation = new GhostLocation{
+                    ProductId = newProduct.Id,
+                    Lat = model.Lat,
+                    Long = model.Long 
+                };
+                _context.GhostLocations.Add(ghostLocation);
+            }
             await _context.SaveChangesAsync();
 
             return true;
@@ -91,59 +119,4 @@ public class ClientController : IdentityController
             return false;
         }
     }
-
-    [HttpGet("products")]
-    public async Task<ActionResult<object>> GetShoppingList()
-    {
-        var shoppingInstances = await _context.ShoppingInstances.Where(si => si.UserId == UserId && si.Bought == false).ToListAsync();
-
-        return Ok(shoppingInstances.Select(async si => new {
-            quantity = si.Quantity,
-            product = await _context.Products.FindAsync(si.ProductId)
-        }));
-    }
-
-    [HttpGet("favouriteProducts")]
-    public async Task<ActionResult<object>> GetFavouriteProducts()
-    {
-        var favouriteProducts = await _context.FavouriteProducts.Where(si => si.UserId == UserId).ToListAsync();
-
-        return Ok(favouriteProducts.Select(async si => new {
-            product = await _context.Products.FindAsync(si.ProductId)
-        }));
-    }
-
-    [HttpPost("newFavouriteStore")]
-    public async Task<bool> AddFavouriteStore(StoreRegisterModel storeRegisterModel)
-    {
-        try
-        {
-            var favouriteStore = new FavouriteStore
-            {
-                UserId = UserId,
-                StoreName = storeRegisterModel.name
-            };
-
-            _context.FavouriteStores.Add(favouriteStore);
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
-    }
-
-    [HttpGet("favouriteStores")]
-    public async Task<ActionResult<object>> GetFavouriteStores()
-    {
-        var favouriteStores = await _context.FavouriteStores.Where(si => si.UserId == UserId).ToListAsync();
-
-        return Ok(favouriteStores.Select(async si => new {
-            store = await _context.Stores.FindAsync(si.StoreName)
-        }));
-    }
-
-
 }
