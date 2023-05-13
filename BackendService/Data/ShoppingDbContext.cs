@@ -16,6 +16,7 @@ public class ShoppingDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Store> Stores { get; set; }
     public DbSet<ShoppingInstance> ShoppingInstances { get; set; }
+    public DbSet<GhostLocation> GhostLocations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,5 +36,7 @@ public class ShoppingDbContext : DbContext
         modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.ProductId);
         modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.UserId);
         modelBuilder.Entity<ShoppingInstance>().HasIndex(x => x.Bought);
+
+        modelBuilder.Entity<GhostLocation>().HasIndex(x => x.ProductId);
     }
 }
