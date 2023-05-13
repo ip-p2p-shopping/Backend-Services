@@ -52,7 +52,23 @@ public class ShoppingListController : IdentityController
         return Ok(result.Where(shoppingInstanceR => shoppingInstanceR.UserId == shoppingInstance.UserId));
     }
 
-    [HttpPut("edit")]
+    [HttpPut("editBought")]
+    public async Task<bool> UpdateBought(ShoppingProduct shoppingProduct)
+    {
+        var shoppingInstance = await _context.ShoppingInstances
+        .FirstOrDefaultAsync(si => si.UserId == UserId && si.ProductId == shoppingProduct.ProductId);
+
+        if (shoppingInstance != null)
+        {
+            shoppingInstance.Bought = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false;
+    }
+
+    [HttpPut("editQuantity")]
     public async Task<ActionResult<List<Product>>> UpdateQuantity(ShoppingProduct shoppingProduct, int newQuantity)
     {
         var shoppingInstance = await _context.ShoppingInstances
