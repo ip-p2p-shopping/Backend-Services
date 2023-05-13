@@ -30,10 +30,45 @@ public class ShoppingListController : IdentityController
 
         return shoppingInstances.Select(si => new {
             quantity = si.Quantity,
-            product = _context.Products.Find(si.ProductId)
+            product = GetProductDetails(si.ProductId)
         }).ToArray();
     }
     
+    private object GetProductDetails(int id) {
+        var product =  _context.Products.Find(id);
+
+        ProductWithLocations ploc = new ProductWithLocations();
+        ploc.Id = product.Id;
+        ploc.Name = product.Name;
+        ploc.Category = product.Category;
+        ploc.Price = product.Price;
+        ploc.MaxPrice = product.Price;
+        ploc.Quantity = product.Quantity;
+        ploc.Description = product.Description;
+        ploc.MeasureUnit = product.MeasureUnit;
+        ploc.StoreId = product.StoreId;
+        ploc.ImageURL = product.ImageURL;
+        ploc.ImageURLs = product.ImageURLs;
+        ploc.Locations = new List<Location>();
+
+        var store = _context.Stores.Find(product.StoreId);
+        if(store != null) {
+            ploc.Locations.Add(new Location{
+                latitude = store.Lat,
+                longitude = store.Long
+            });
+        }
+        foreach(var loc in _context.GhostLocations.Where(x => x.ProductId == product.Id))
+        {
+            ploc.Locations.Add(new Location{ 
+                latitude = loc.Lat,
+                longitude = loc.Long
+            });
+        }
+
+        return ploc;
+    }
+
     [HttpGet("history")]
     public async Task<object[]> GetShoppingHistory()
     {
