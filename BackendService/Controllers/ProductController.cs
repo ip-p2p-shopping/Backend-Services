@@ -70,6 +70,7 @@ public class ProductController : IdentityController
         product.Name = request.Name;
         product.Price = request.Price;
         product.Quantity = request.Quantity;
+        product.Category = request.Category;
         product.Description = request.Description;
         product.MeasureUnit = request.MeasureUnit;
         product.StoreId = await GetStoreId(UserId);
