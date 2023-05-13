@@ -14,6 +14,7 @@ public class ShoppingDbContext : DbContext
     
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Store> Stores { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,7 +22,10 @@ public class ShoppingDbContext : DbContext
             .HasIndex(b => b.Id);
         modelBuilder.Entity<User>()
             .HasIndex(b => b.Email).IsUnique();
+        modelBuilder.Entity<User>()
+            .HasIndex(b => b.StoreId).IsUnique();
 
+        modelBuilder.Entity<Product>().HasIndex(p => p.StoreId);
         modelBuilder.Entity<Product>().Property(p => p.ImageURLs)
             .HasConversion(
                 v => JsonConvert.SerializeObject(v),

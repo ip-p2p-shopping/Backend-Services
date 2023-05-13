@@ -9,6 +9,8 @@ public class User
         FirstName = string.Empty;
         LastName = String.Empty;
         Address = String.Empty;
+
+        StoreId = String.Empty;
     }
     
     public string Id { get; set; }
@@ -22,4 +24,6 @@ public class User
     public string LastName { get; set; }
     
     public string Address { get; set; }
+    
+    public string StoreId { get; set; }
 }

@@ -68,6 +68,37 @@ namespace BackendService
             await _dbContext.SaveChangesAsync();
             return StatusCode(200);
         }
+        
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("RegisterStore")]
+        public async Task<IActionResult> RegisterStore(StoreRegisterModel model)
+        {
+            if (await _dbContext.Users.Where(x => x.Email == model.email.ToLower().Replace(" ", "")).AnyAsync())
+            {
+                return StatusCode(409);
+            }
+
+            Store store = new Store()
+            {
+                StoreName = model.name,
+                Lat = model.latitudine,
+                Long = model.longitudine
+            };
+            var user = new User()
+            {
+                Email = model.email.ToLower().Replace(" ", ""),
+                Password = EncryptionHelpers.ComputeHash(model.password),
+                Address = "",
+                StoreId = store.Id
+            };
+            
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.Stores.AddAsync(store);
+            await _dbContext.SaveChangesAsync();
+
+            return StatusCode(200);
+        }
 
         [HttpGet]
         [Route("GetUserDetails")]

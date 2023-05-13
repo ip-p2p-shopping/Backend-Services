@@ -25,18 +25,20 @@ public class ProductController : IdentityController
     [HttpGet(Name = "products")]
     public async Task<ActionResult<List<Product>>> Get()
     {
+        string storeId = await GetStoreId(UserId);
         var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        return Ok(result.Where(productR => productR.StoreId == storeId));
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> Get(int id)
     {
+        string storeId = await GetStoreId(UserId);
         var product = await _context.Products.FindAsync(id);
         if (product == null)
             return BadRequest("Product not found.");
 
-        if (product.SellerId != UserId)
+        if (product.StoreId != storeId)
             return BadRequest("You're not allowed to view the product with id " + product.Id + ".");
 
         return Ok(product);
@@ -45,22 +47,23 @@ public class ProductController : IdentityController
     [HttpPost("new")]
     public async Task<ActionResult<List<Product>>> AddProduct(Product product)
     {
-        product.SellerId = UserId;
+        product.StoreId = await GetStoreId(UserId);;
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
 
         var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        return Ok(result.Where(productR => productR.StoreId == product.StoreId));
     }
 
     [HttpPut("edit")]
     public async Task<ActionResult<List<Product>>> UpdateProduct(Product request)
     {
+        string storeId = await GetStoreId(UserId);
         var product = await _context.Products.FindAsync(request.Id);
         if (product == null)
             return BadRequest("Product not found.");
 
-        if (product.SellerId != UserId)
+        if (product.StoreId != storeId)
             return BadRequest("You're not allowed to edit the product with id " + product.Id + ".");
 
 
@@ -69,14 +72,14 @@ public class ProductController : IdentityController
         product.Quantity = request.Quantity;
         product.Description = request.Description;
         product.MeasureUnit = request.MeasureUnit;
-        product.SellerId = UserId;
+        product.StoreId = await GetStoreId(UserId);
         product.ImageURL = request.ImageURL;
         product.ImageURLs = request.ImageURLs; //pentru a modifica TOATE pozele unui produs
         
         await _context.SaveChangesAsync();
 
         var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        return Ok(result.Where(productR => productR.StoreId == product.StoreId));
     }    
 
     [HttpDelete("delete/{id}")]
@@ -86,14 +89,14 @@ public class ProductController : IdentityController
         if (product == null)
             return BadRequest("Product not found.");
         
-        if (product.SellerId != UserId)
+        if (product.StoreId != await GetStoreId(UserId))
             return BadRequest("You're not allowed to delete the product with id " + id + ".");
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
 
         var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        return Ok(result.Where(productR => productR.StoreId == product.StoreId));
     }
 
     [HttpDelete("delete/")]
@@ -104,21 +107,21 @@ public class ProductController : IdentityController
         if (product == null)
             return BadRequest("Product with id " + Ids[i] + " not found.");
 
-        if(product.SellerId != UserId)
+        if(product.StoreId != await GetStoreId(UserId))
             return BadRequest("You're not allowed to remove the product with id " + Ids[i] + ".");
 
         _context.Products.Remove(product);
         }
         await _context.SaveChangesAsync();
 
+        string storeId = await GetStoreId(UserId);
         var result = await _context.Products.ToListAsync();
-        return Ok(result.Where(productR => productR.SellerId == UserId));
+        return Ok(result.Where(productR => productR.StoreId == storeId));
     }
 
     [HttpPost("batch-upload")]
     public async Task<ActionResult<List<Product>>> BatchUpload(List<IFormFile> file)
     {
-
         var result = new StringBuilder();
         using (var reader = new StreamReader(file[0].OpenReadStream()))
         {
@@ -132,7 +135,7 @@ public class ProductController : IdentityController
                     Quantity = Int32.Parse(elements[2]),
                     MeasureUnit = elements[3],
                     ImageURL = elements[4],
-                    SellerId = UserId
+                    StoreId = await GetStoreId(UserId)
                 };
                 _context.Products.Add(product);
             }
@@ -141,7 +144,9 @@ public class ProductController : IdentityController
         }
 
         var productList = await _context.Products.ToListAsync();
-        return Ok(productList.Where(productR => productR.SellerId == UserId));
+        string storeId = await GetStoreId(UserId);
+        return Ok(productList.Where(productR => productR.StoreId == storeId));
     }
 
+    private async Task<string> GetStoreId(string userId) => (await _context.Users.FindAsync(userId)).StoreId;
 }
