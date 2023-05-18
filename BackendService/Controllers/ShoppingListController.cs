@@ -145,7 +145,7 @@ public class ShoppingListController : IdentityController
             shoppingInstance.Bought = true;
             await _context.SaveChangesAsync();
 
-            var product = await _context.Products.FindAsync(shoppingInstance.ProductId);
+            var product = await _context.Products.Where(x => x.Id == shoppingInstance.ProductId).FirstOrDefaultAsync();
             if(product != null)
             {
                 var store = await _context.Stores.FindAsync(product.StoreId);
@@ -156,6 +156,12 @@ public class ShoppingListController : IdentityController
                             Lat = shoppingProduct.Lat,
                             Long = shoppingProduct.Long
                         });
+                } else {
+                    _context.GhostLocations.Add(new GhostLocation{
+                            ProductId = shoppingProduct.ProductId,
+                            Lat = shoppingProduct.Lat,
+                            Long = shoppingProduct.Long
+                    });
                 }
 
                 await _context.SaveChangesAsync();
