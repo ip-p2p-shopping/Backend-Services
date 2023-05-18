@@ -151,17 +151,41 @@ public class ShoppingListController : IdentityController
                 var store = await _context.Stores.FindAsync(product.StoreId);
                 if(store != null) {
                     if(LocationHelper.VerifyLocation(store.Lat, store.Long, shoppingProduct.Lat, shoppingProduct.Long)) {
+                        var ghostLocations = await _context.GhostLocations.Where(x => x.ProductId == product.Id).ToArrayAsync();
+                        bool add = true;
+                        foreach(var g in ghostLocations)
+                        {
+                            if(LocationHelper.VerifyLocation(g.Lat, g.Long, shoppingProduct.Lat, shoppingProduct.Long))
+                            {
+                                add = false;
+                                break;
+                            }
+                        }
+                        if(add){
+                            _context.GhostLocations.Add(new GhostLocation{
+                                ProductId = shoppingProduct.ProductId,
+                                Lat = shoppingProduct.Lat,
+                                Long = shoppingProduct.Long
+                            });
+                        }
+                } else {
+                    var ghostLocations = await _context.GhostLocations.Where(x => x.ProductId == product.Id).ToArrayAsync();
+                    bool add = true;
+                    foreach(var g in ghostLocations)
+                    {
+                        if(LocationHelper.VerifyLocation(g.Lat, g.Long, shoppingProduct.Lat, shoppingProduct.Long))
+                        {
+                            add = false;
+                            break;
+                        }
+                    }
+                    if(add){
                         _context.GhostLocations.Add(new GhostLocation{
                             ProductId = shoppingProduct.ProductId,
                             Lat = shoppingProduct.Lat,
                             Long = shoppingProduct.Long
                         });
-                } else {
-                    _context.GhostLocations.Add(new GhostLocation{
-                            ProductId = shoppingProduct.ProductId,
-                            Lat = shoppingProduct.Lat,
-                            Long = shoppingProduct.Long
-                    });
+                    }
                 }
 
                 await _context.SaveChangesAsync();
