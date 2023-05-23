@@ -102,7 +102,7 @@ public class ClientController : IdentityController
     
     [HttpPost("uploadImage")]
     [AllowAnonymous]
-    public async Task<IActionResult> UploadImage(IFormFile file)
+    public async Task<string> UploadImage(IFormFile file)
     {
         try {
             string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
@@ -115,11 +115,11 @@ public class ClientController : IdentityController
                     await file.CopyToAsync(stream);
                 }
             }
-            return Ok(filePath);
+            return filePath;
         }
         catch(Exception e) {
             Console.WriteLine(e);
-            return Ok(e);
+            return e;
         }
     }
 
