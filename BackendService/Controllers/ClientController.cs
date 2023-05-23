@@ -101,6 +101,7 @@ public class ClientController : IdentityController
     }
     
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> OnPostUploadAsync(IFormFile file)
     {
         string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
