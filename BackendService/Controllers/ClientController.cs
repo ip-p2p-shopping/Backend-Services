@@ -119,7 +119,7 @@ public class ClientController : IdentityController
         }
         catch(Exception e) {
             Console.WriteLine(e);
-            return e;
+            return e.ToString();
         }
     }
 
