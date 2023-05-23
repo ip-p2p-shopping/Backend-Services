@@ -19,9 +19,9 @@ public class ClientController : IdentityController
 
     private readonly ShoppingDbContext _context;
     private readonly ILogger<ClientController> _logger;
-    private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
+    private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _hostingEnvironment;
 
-    public ClientController(ILogger<ClientController> logger, ShoppingDbContext context, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment)
+    public ClientController(ILogger<ClientController> logger, ShoppingDbContext context, Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnvironment)
     {
         _logger = logger;
         _context = context;
