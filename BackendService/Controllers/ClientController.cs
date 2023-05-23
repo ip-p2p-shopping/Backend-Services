@@ -99,6 +99,21 @@ public class ClientController : IdentityController
 
         return ploc;
     }
+    
+    [HttpPost]
+    public async Task<IActionResult> OnPostUploadAsync(IFormFile file)
+    {
+        string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
+        var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", imgName);
+        if (file.Length > 0)
+        {
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+        }
+        return Ok(filePath);
+    }
 
     [RequestFormLimits(ValueLengthLimit = 209715200)]
     [HttpPost("newProductByClient")]
