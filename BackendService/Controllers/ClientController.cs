@@ -104,16 +104,23 @@ public class ClientController : IdentityController
     [AllowAnonymous]
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
-        string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
-        var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", imgName);
-        if (file.Length > 0)
-        {
-            using (var stream = System.IO.File.Create(filePath))
+        try {
+            string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", imgName);
+            Console.WriteLine($"Inserting into {filePath}");
+            if (file.Length > 0)
             {
-                await file.CopyToAsync(stream);
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await file.CopyToAsync(stream);
+                }
             }
+            return Ok(filePath);
         }
-        return Ok(filePath);
+        catch(Exception e) {
+            Console.WriteLine(e);
+            return Ok(e);
+        }
     }
 
     [RequestFormLimits(ValueLengthLimit = 209715200)]
