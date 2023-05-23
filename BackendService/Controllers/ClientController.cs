@@ -105,7 +105,7 @@ public class ClientController : IdentityController
     public async Task<string> UploadImage(IFormFile file)
     {
         try {
-            string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
+            string imgName = $"{Guid.NewGuid().ToString()}{Path.GetExtension(file.FileName)}";
             var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", imgName);
             Console.WriteLine($"Inserting into {filePath}");
             if (file.Length > 0)
@@ -115,7 +115,7 @@ public class ClientController : IdentityController
                     await file.CopyToAsync(stream);
                 }
             }
-            return filePath;
+            return Path.Combine("images", imgName);
         }
         catch(Exception e) {
             Console.WriteLine(e);
