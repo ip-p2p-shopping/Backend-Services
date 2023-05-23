@@ -100,9 +100,9 @@ public class ClientController : IdentityController
         return ploc;
     }
     
-    [HttpPost]
+    [HttpPost("uploadImage")]
     [AllowAnonymous]
-    public async Task<IActionResult> OnPostUploadAsync(IFormFile file)
+    public async Task<IActionResult> UploadImage(IFormFile file)
     {
         string imgName = $"{Guid.NewGuid().ToString()}.{Path.GetExtension(file.FileName)}";
         var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "images", imgName);
@@ -164,26 +164,6 @@ public class ClientController : IdentityController
         }
         catch (Exception ex)
         {
-            return ex.ToString();
-        }
-    }
-
-    [HttpPost("uploadImage")]
-    public async Task<object> UploadFile([FromForm(Name = "file")]IFormFile file) {
-        if(file == null) {
-            return BadRequest("No file");
-        }
-        try {
-            string path = Path.Combine(_hostingEnvironment.WebRootPath, $"{file.Name}.png");
-            var product = await _context.Products.FindAsync(Convert.ToInt32(file.Name));
-            product.ImageURLs = new List<string>() { $"/{file.Name}.png" };
-            await _context.SaveChangesAsync();
-            using (Stream fileStream = new FileStream(path, FileMode.Create)) {
-                await file.CopyToAsync(fileStream);
-            }
-            return "OK";
-        }
-        catch(Exception ex) {
             return ex.ToString();
         }
     }
