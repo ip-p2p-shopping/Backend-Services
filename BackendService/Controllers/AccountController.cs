@@ -197,7 +197,7 @@ namespace BackendService
       }
       catch (Exception e)
       {
-        return BadRequest(new { error = e.Message });
+        return BadRequest(new { error = e.ToString() });
       }
     }
   }
