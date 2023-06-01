@@ -141,57 +141,64 @@ namespace BackendService
     [Route("Google")]
     public async Task<IActionResult> GoogleCallback(GoogleTokenModel model)
     {
-      _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {model.token}");
-
-      var response = await _httpClient.GetAsync("https://www.googleapis.com/userinfo/v2/me");
-
-      string email = null;
-
-      if (response.IsSuccessStatusCode)
+      try
       {
-        var responseJson = await response.Content.ReadAsStringAsync();
-        var jsonDocument = JsonDocument.Parse(responseJson);
+        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {model.token}");
 
-        if (jsonDocument.RootElement.TryGetProperty("email", out var emailProperty) && emailProperty.ValueKind == JsonValueKind.String)
+        var response = await _httpClient.GetAsync("https://www.googleapis.com/userinfo/v2/me");
+
+        string email = null;
+
+        if (response.IsSuccessStatusCode)
         {
-          email = emailProperty.GetString();
+          var responseJson = await response.Content.ReadAsStringAsync();
+          var jsonDocument = JsonDocument.Parse(responseJson);
+
+          if (jsonDocument.RootElement.TryGetProperty("email", out var emailProperty) && emailProperty.ValueKind == JsonValueKind.String)
+          {
+            email = emailProperty.GetString();
+          }
         }
-      }
-      else
-      {
-        var statusCode = response.StatusCode;
-        var errorMessage = await response.Content.ReadAsStringAsync();
-
-        return BadRequest(new { error = "Invalid Google token." });
-      }
-
-      if (email == null)
-      {
-        return BadRequest(new { error = "Invalid Google token." });
-      }
-
-      var user = await _dbContext.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
-
-      // note: nu stiu ce se intampla daca un user are deja emailu in db si dupa incearca sa dea login cu google
-
-      if (user == null)
-      {
-        user = new User()
+        else
         {
-          Email = email,
-          Password = "",
-          Address = "",
-          FirstName = "",
-          LastName = ""
-        };
+          var statusCode = response.StatusCode;
+          var errorMessage = await response.Content.ReadAsStringAsync();
 
-        await _dbContext.Users.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+          return BadRequest(new { error = "Invalid Google token." });
+        }
+
+        if (email == null)
+        {
+          return BadRequest(new { error = "Invalid Google token." });
+        }
+
+        var user = await _dbContext.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
+
+        // note: nu stiu ce se intampla daca un user are deja emailu in db si dupa incearca sa dea login cu google
+
+        if (user == null)
+        {
+          user = new User()
+          {
+            Email = email,
+            Password = "",
+            Address = "",
+            FirstName = "",
+            LastName = ""
+          };
+
+          await _dbContext.Users.AddAsync(user);
+          await _dbContext.SaveChangesAsync();
+        }
+
+        string token = _jwtProvider.Generate(user);
+
+        return Ok(token);
       }
-
-      string token = _jwtProvider.Generate(user);
-
-      return Ok(token);
+      catch (Exception e)
+      {
+        return BadRequest(new { error = e.Message });
+      }
     }
   }
 }
