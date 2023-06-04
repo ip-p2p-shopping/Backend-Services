@@ -172,7 +172,8 @@ namespace BackendService
           return BadRequest(new { error = "Invalid Google token." });
         }
 
-        var user = await _dbContext.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
+        email = email.ToLower().Replace(" ", "");
+        var user = await _dbContext.Users.Where(user => user.Email.ToLower().Replace(" ", "") == email).FirstOrDefaultAsync();
 
         // note: nu stiu ce se intampla daca un user are deja emailu in db si dupa incearca sa dea login cu google
 
