@@ -26,8 +26,6 @@ public class ShoppingDbContext : DbContext
             .HasIndex(b => b.Id);
         modelBuilder.Entity<User>()
             .HasIndex(b => b.Email).IsUnique();
-        modelBuilder.Entity<User>()
-            .HasIndex(b => b.StoreId).IsUnique();
 
         modelBuilder.Entity<Product>().HasIndex(p => p.StoreId);
         modelBuilder.Entity<Product>().Property(p => p.ImageURLs)
